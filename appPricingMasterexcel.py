@@ -16,6 +16,8 @@ from sklearn.ensemble import RandomForestRegressor
 import joblib
 import os
 
+st.set_page_config(page_title="Optimizador de Eventos", layout="wide")
+
 # -------------------------------
 # Estructuras de Datos
 # -------------------------------
@@ -409,7 +411,6 @@ def calculate_minimum_possible_revenue(sections: List[Section], global_min: floa
 # -------------------------------
 
 def main():
-    st.set_page_config(page_title="Optimizador de Eventos", layout="wide")
     
     # Inicialización de variables de sesión
     if 'current_scenario' not in st.session_state:
@@ -797,6 +798,22 @@ def generate_excel_report(scenarios: Dict[str, Scenario], presentation_mode: str
                 sensi.to_excel(writer, sheet_name=sensi_sheet_name, index=False)
     output.seek(0)
     return output
+
+def check_password():
+    password = st.text_input("Contraseña", type="password")
+    if password == st.secrets["password"]:
+        st.session_state["authenticated"] = True
+        st.success("Acceso concedido.")
+        return True
+    else:
+        st.session_state["authenticated"] = False
+        if password != "":
+            st.error("Acceso denegado.")
+        return False
+
+if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+    if not check_password():
+        st.stop()
 
 if __name__ == "__main__":
     main()
